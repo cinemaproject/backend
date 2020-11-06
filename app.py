@@ -3,6 +3,7 @@ import insightface
 import urllib
 import urllib.request
 import cv2
+import json
 import numpy as np
 
 model = insightface.app.FaceAnalysis(rec_name = 'arcface_r100_v1', det_name = 'retinaface_mnet025_v2')
@@ -27,24 +28,33 @@ def recognize_actors():
     img = url_to_image(img_url)
     img_out = img.copy()
     faces = model.get(img)
+    faces_arr = []
     for idx, face in enumerate(faces):
-        print("Face [%d]:"%idx)
-        print("\tage:%d"%(face.age))
+        face_d = {}
+        #print("Face [%d]:"%idx)
+        face_d['index'] = idx
+        #print("\tage:%d"%(face.age))
         gender = 'Male'
         if face.gender==0:
             gender = 'Female'
-        print("\tgender:%s"%(gender))
-        print("\tembedding shape:%s"%face.embedding.shape)
+        face_d['gender'] = gender
+        #print("\tgender:%s"%(gender))
+        #print("\tembedding shape:%s"%face.embedding.shape)
+        face_d['embedding_shape'] = str(face.embedding.shape)
         bboxes = face.bbox.astype(np.int)
-        print("\tbbox:%s"%(bboxes.flatten()))
+        face_d['bbox'] = str(bboxes.flatten())
+        #print("\tbbox:%s"%(bboxes.flatten()))
         img_out = cv2.rectangle(img_out, (bboxes[0], bboxes[1]), (bboxes[2], bboxes[3]), (0, 255, 0), 2)
-        print("\tlandmark:%s"%(face.landmark.astype(np.int).flatten()))
-        print("")
+        #print("\tlandmark:%s"%(face.landmark.astype(np.int).flatten()))
+        #print("")
         img_out = cv2.putText(img_out, str(face.age), (int(bboxes[0]-10), int(bboxes[1]-10)), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (0, 255, 0),2)
         img_out = cv2.putText(img_out, str(gender), (int(bboxes[0]+40), int(bboxes[1]-10)), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (0, 0, 255),2)
         img_out = cv2.putText(img_out, str(idx), (int(bboxes[0]-40), int(bboxes[1]-10)), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (0, 0, 255),2)
+        faces_arr.append(face_d)
     cv2.imwrite('static\\result.jpg', img_out) 
-    return render_template("actors.html", res_image = 'static\\result.jpg')
+    resp = {"faces": faces_arr}
+    #return render_template("actors.html", res_image = 'static\\result.jpg')
+    return json.dumps(resp,ensure_ascii=False), 200
 
 
 @app.route('/posters_by_color')
