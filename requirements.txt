@@ -8,6 +8,7 @@ easydict==1.9
 Flask==1.1.2
 Flask-Migrate==2.5.3
 Flask-SQLAlchemy==2.4.4
+Flask-cors
 graphviz==0.8.4
 idna==2.6
 imageio==2.9.0
