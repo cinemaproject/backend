@@ -7,10 +7,16 @@ import cv2
 import json
 import numpy as np
 import uuid
+import os
+from face_searcher import face_searcher
+
+if not os.path.exists('images'):
+    os.makedirs('images')
 
 model = insightface.app.FaceAnalysis(rec_name = 'arcface_r100_v1', det_name = 'retinaface_mnet025_v2')
 ctx_id = -1
 model.prepare(ctx_id = ctx_id, nms=0.4)
+searcher = face_searcher()
 app = Flask(__name__)
 
 @app.route('/images/<path:path>')
@@ -50,7 +56,9 @@ def recognize_actors():
         face_d['gender'] = gender
         #print("\tgender:%s"%(gender))
         #print("\tembedding shape:%s"%face.embedding.shape)
-        face_d['embedding_shape'] = str(face.embedding.shape)
+        #face_d['embedding_shape'] = str(face.embedding.shape)
+        face_search_res = searcher.search_face(face.embedding, 1)
+        face_d['search_results'] = face_search_res
         bboxes = face.bbox.astype(np.int)
         face_name = img_name + '_' + str(idx) + '.jpg'
         face_d['face_image_url'] = 'http://127.0.0.1:5000/images/' + face_name
