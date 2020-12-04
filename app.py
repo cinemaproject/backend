@@ -36,10 +36,13 @@ def hello():
     return 'hello'
 
 
-@app.route('/actors_recognition', methods=['GET'])
+@app.route('/actors_recognition', methods=['POST'])
+@cross_origin()
 def recognize_actors():
-    img_url = request.args.get('url')
-    img = url_to_image(img_url)
+    image_undecoded = request.get_data()
+    img = cv2.imdecode(np.frombuffer(image_undecoded, np.uint8), -1)
+    #img_url = request.args.get('url')
+    #img = url_to_image(img_url)
     img_out = img.copy()
     faces = model.get(img)
     faces_arr = []
