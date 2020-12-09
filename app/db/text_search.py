@@ -1,4 +1,4 @@
-from app.db.connection import instance as db
+from db.connection import instance as db
 from sqlalchemy.sql import text
 
 

@@ -1,6 +1,6 @@
-import app.config as config
-from app.db import text_search
-from app.utils import AlchemyEncoder
+import config
+from db import text_search, items
+from utils import resultproxy_to_dict
 import os
 from flask_cors import CORS, cross_origin
 import insightface
@@ -19,6 +19,7 @@ if not os.path.exists(config.images_dir):
     os.makedirs(config.images_dir)
 
 
+print("Preparing model")
 model = insightface.app.FaceAnalysis(
     rec_name='arcface_r100_v1', det_name='retinaface_mnet025_v2')
 ctx_id = -1
@@ -45,30 +46,36 @@ def url_to_image(url):
 @cross_origin()
 def search_people():
     name = request.args.get('name')
-    people = text_search.get_people_by_name(name)
-    result = json.dumps(people, cls=AlchemyEncoder)
-    return "{\"people\": " + result + " \}"
+    people = resultproxy_to_dict(text_search.get_people_by_name(name))
+    result = {'people': people}
+    return json.dumps(result)
 
 
-@app.route('/people/search')
+@app.route('/people/<id>')
 @cross_origin()
 def get_person():
-    return 'person'
+    person = items.get_person_by_id(id)
+    films = items.get_related_films(id)
+    result = {'person': person, 'films': films}
+    return json.dumps(result)
 
 
 @app.route('/films/search')
 @cross_origin()
 def search_films():
-    name = request.args.get('title')
-    films = text_search.get_films_by_title(name)
-    result = json.dumps(films, cls=AlchemyEncoder)
-    return "{\"films\": " + result + " \}"
+    title = request.args.get('title')
+    films = resultproxy_to_dict(text_search.get_films_by_title(title))
+    result = {'films': films}
+    return json.dumps(result)
 
 
-@app.route('/films/:id')
+@app.route('/films/<id>')
 @cross_origin()
-def get_film_info():
-    return 'film'
+def get_film_info(id):
+    film = items.get_film_by_id(id)
+    people = items.get_related_people(id)
+    result = {'film': film, 'people': people}
+    return json.dumps(result)
 
 
 @app.route('/actors_recognition', methods=['POST'])
@@ -112,4 +119,5 @@ def recognize_actors():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    print("Starting server on port 5000")
+    app.run(host="0.0.0.0", port=5000)

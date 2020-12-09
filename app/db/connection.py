@@ -1,9 +1,9 @@
-import app.config
+import config
 
 import sqlalchemy
 from sqlalchemy import MetaData
 
-instance = sqlalchemy.create_engine('postgresql:///tutorial.db')
+instance = sqlalchemy.create_engine(config.postgres_url)
 instance.connect()
 
 metadata = MetaData()
