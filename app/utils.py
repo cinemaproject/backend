@@ -4,14 +4,11 @@ import json
 
 def get_film_id(id):
     """Pad film ID to be 10 characters in length"""
-    print(id)
-    # return id
     return "{:<10}".format(str(id))
 
 
 def get_person_id(id):
     """Pad person ID to be 10 characters in length"""
-    print(id)
     return "{:<14}".format(str(id))
 
 
