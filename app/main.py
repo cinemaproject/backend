@@ -53,9 +53,9 @@ def search_people():
 
 @app.route('/people/<id>')
 @cross_origin()
-def get_person():
-    person = items.get_person_by_id(id)
-    films = items.get_related_films(id)
+def get_person(id):
+    person = resultproxy_to_dict(items.get_person_by_id(id))
+    films = resultproxy_to_dict(items.get_related_films(id))
     result = {'person': person, 'films': films}
     return json.dumps(result)
 
@@ -72,8 +72,8 @@ def search_films():
 @app.route('/films/<id>')
 @cross_origin()
 def get_film_info(id):
-    film = items.get_film_by_id(id)
-    people = items.get_related_people(id)
+    film = resultproxy_to_dict(items.get_film_by_id(id))
+    people = resultproxy_to_dict(items.get_related_people(id))
     result = {'film': film, 'people': people}
     return json.dumps(result)
 
