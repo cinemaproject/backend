@@ -7,7 +7,7 @@ ADD app ./app
 ADD static ./static
 ADD templates ./templates
 COPY embeddings.pickle ./
-COPY keys_dict.json ./
+COPY keys_dict2.json ./
 COPY requirements.txt ./
 
 RUN swupd bundle-add opencv-python
