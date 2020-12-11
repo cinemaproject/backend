@@ -1,4 +1,4 @@
-import pickle
+import pickle5 as pickle
 import json
 import numpy as np
 from scipy.spatial import distance
@@ -13,7 +13,7 @@ class face_searcher():
             self.list_items.append(item.squeeze())
         self.keys = []
         raw_keys = json.load( open( "keys_dict2.json" ) )
-        for key, value in raw_keys.iteritems():
+        for key, value in raw_keys.items():
             self.keys.append({"id": key, "image": value})
     
     
