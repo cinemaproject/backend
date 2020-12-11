@@ -1,4 +1,4 @@
-import pickle5 as pickle
+import pickle
 import json
 import numpy as np
 from scipy.spatial import distance
