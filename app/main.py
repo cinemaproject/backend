@@ -96,6 +96,7 @@ def recognize_actors():
             gender = 'Female'
         face_d['gender'] = gender
         face_search_res = searcher.search_face(face.embedding, 1)
+        face_d['person_info'] = get_person(face_search_res["id"])
         face_d['search_results'] = face_search_res
         bboxes = face.bbox.astype(np.int)
         face_name = img_name + '_' + str(idx) + '.jpg'
