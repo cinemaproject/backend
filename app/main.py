@@ -1,5 +1,4 @@
 import config
-from utils import resultproxy_to_dict
 import os
 from flask_cors import CORS, cross_origin
 import insightface
